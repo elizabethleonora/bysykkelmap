@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/deck.gl@^7.0.0/dist.min.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.3.1/mapbox-gl.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="container" style="width: 100vw; height: 100vh;"></div>
+  </body>
+  <script type="text/javascript">
+
+  const STATIONS = 'https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json';
+  const TRIPS = 'https://raw.githubusercontent.com/elizabethleonora/bysykkelmap/master/trips.json'
+
+const deckgl = new deck.DeckGL({
+  mapboxApiAccessToken: 'pk.eyJ1IjoiZWxpemFibG4iLCJhIjoiY2swYmJ2MGllMHNvbzNjbW90a3U0a3o2MiJ9.gLlcrV78aisJSJ3hVNjOTw',
+  mapStyle: 'mapbox://styles/mapbox/dark-v10',
+  container: 'container',
+  longitude: 10.755035,
+  latitude: 59.914151,
+  zoom: 12,
+  layers: [
+    new deck.ScatterplotLayer({
+      data: STATIONS,
+      dataTransform: d => d.data.stations.filter(f => f),
+      getPosition: f => [f.lon, f.lat],
+      getRadius: f => 2,
+      radiusMinPixels: 2,
+      pickable: true,
+      getColor: f => [255, 255, 255]
+    }),
+    new deck.ArcLayer({
+      data: TRIPS,
+      getSourcePosition: f => [f.start_station_longitude,f.start_station_latitude],
+      getTargetPosition: f => [f.end_station_longitude, f.end_station_latitude],
+      getSourceColor: [0, 128, 200],
+      getTargetColor: [200, 0, 80]
+    })
+  ]
+});
+
+  </script>
+</html>
